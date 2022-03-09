@@ -2,7 +2,6 @@
 //
 //     final foodCategoriesModel = foodCategoriesModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 String? error;

@@ -10,7 +10,7 @@ class FoodCategoryApi {
       Response response = await _dio.get(food_cat_url);
       return FoodCategoriesModel.fromJson(response.data);
     } catch (e) {
-      print("Error $e");
+      ("Error $e");
       return FoodCategoriesModel.withError("Data not found");
     }
   }

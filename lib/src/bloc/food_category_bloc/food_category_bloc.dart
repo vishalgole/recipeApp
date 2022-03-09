@@ -6,18 +6,14 @@ import 'package:recipe_app/src/bloc/food_category_bloc/food_category_state.dart'
 class FoodCategoryBloc extends Bloc<FoodCategoryEvent, FoodCategoryState> {
   FoodCategoryBloc() : super(FoodCategoryStateIniitial()) {
     final FoodCategoryApi _api = FoodCategoryApi();
-    on<GetFoodCategoryList>(((event, emit) async {
+    on<GetFoodCategoryList>((event, emit) async {
       try {
         emit(FoodCategoryStateLoading());
         final catList = await _api.fetchFoodCategories();
         emit(FoodCategoryStateLoaded(catList));
-        // if (catList) {
-        //   emit(FoodCategoryStateError(catList.error));
-        // }
       } catch (e) {
         emit(const FoodCategoryStateError("Failed to fetch data"));
       }
-      ;
-    }));
+    });
   }
 }

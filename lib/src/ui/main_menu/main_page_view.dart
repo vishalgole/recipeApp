@@ -43,7 +43,7 @@ class MainMenuPageView extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             decoration: BoxDecoration(
               border: Border.all(
-                color: Color.fromARGB(255, 78, 66, 66),
+                color: const Color.fromARGB(255, 78, 66, 66),
               ),
               borderRadius: BorderRadius.circular(25),
             ),
@@ -75,7 +75,7 @@ class MainMenuPageView extends StatelessWidget {
                 left: deviceWidth * 0.08,
                 top: deviceHeight * 0.05,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(80),
                     bottomLeft: Radius.circular(80),
                   ),
@@ -84,9 +84,11 @@ class MainMenuPageView extends StatelessWidget {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HomePageView()));
+                              builder: (context) => HomePageView(
+                                    selectedVal: 'food',
+                                  )));
                     },
-                    child: Container(
+                    child: SizedBox(
                       height: deviceHeight * 0.15,
                       width: deviceWidth * 0.85,
                       child: const Card(
@@ -113,11 +115,11 @@ class MainMenuPageView extends StatelessWidget {
               Positioned(
                 left: deviceWidth * 0.05,
                 top: deviceHeight * 0.08,
-                child: Container(
+                child: SizedBox(
                   height: 60,
                   width: 60,
                   child: Stack(
-                    children: [
+                    children: const [
                       CircleAvatar(
                         radius: 80,
                         backgroundImage: NetworkImage(
@@ -132,14 +134,14 @@ class MainMenuPageView extends StatelessWidget {
                 top: deviceHeight * 0.1,
                 child: ElevatedButton(
                   onPressed: () {},
-                  child: Icon(
+                  child: const Icon(
                     Icons.chevron_right_outlined,
                     color: Colors.red,
                     // size: 40,
                   ),
                   style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(10),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(10),
                       primary: Colors.transparent),
                 ),
               ),
@@ -149,41 +151,51 @@ class MainMenuPageView extends StatelessWidget {
                 left: deviceWidth * 0.08,
                 top: deviceHeight * 0.25,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(80),
                     bottomLeft: Radius.circular(80),
                   ),
-                  child: Container(
-                    height: deviceHeight * 0.15,
-                    width: deviceWidth * 0.85,
-                    child: const Card(
-                        child: Padding(
-                      padding: EdgeInsets.only(left: 40.0),
-                      child: Center(
-                        child: ListTile(
-                          title: Text(
-                            "Beverages",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            "220 items",
-                            style: TextStyle(fontSize: 14),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePageView(
+                                    selectedVal: 'drink',
+                                  )));
+                    },
+                    child: Container(
+                      height: deviceHeight * 0.15,
+                      width: deviceWidth * 0.85,
+                      child: const Card(
+                          child: Padding(
+                        padding: EdgeInsets.only(left: 40.0),
+                        child: Center(
+                          child: ListTile(
+                            title: Text(
+                              "Beverages",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              "220 items",
+                              style: TextStyle(fontSize: 14),
+                            ),
                           ),
                         ),
-                      ),
-                    )),
+                      )),
+                    ),
                   ),
                 ),
               ),
               Positioned(
                 left: deviceWidth * 0.05,
                 top: deviceHeight * 0.28,
-                child: Container(
+                child: SizedBox(
                   height: 60,
                   width: 60,
                   child: Stack(
-                    children: [
+                    children: const [
                       CircleAvatar(
                         radius: 50,
                         backgroundImage: NetworkImage(
@@ -198,14 +210,14 @@ class MainMenuPageView extends StatelessWidget {
                 top: deviceHeight * 0.3,
                 child: ElevatedButton(
                   onPressed: () {},
-                  child: Icon(
+                  child: const Icon(
                     Icons.chevron_right_outlined,
                     color: Colors.red,
                     // size: 40,
                   ),
                   style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(10),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(10),
                       primary: Colors.transparent),
                 ),
               )
