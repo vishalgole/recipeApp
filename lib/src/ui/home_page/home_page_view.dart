@@ -9,7 +9,12 @@ import 'package:recipe_app/src/bloc/food_category_bloc/food_category_state.dart'
 import 'package:recipe_app/src/bloc/selected_category_bloc/selected_category_bloc.dart';
 import 'package:recipe_app/src/bloc/selected_category_bloc/selected_category_event.dart';
 import 'package:recipe_app/src/bloc/selected_category_bloc/selected_category_state.dart';
+import 'package:recipe_app/src/bloc/selected_drink_category_bloc/selected_drink_category_bloc.dart';
+import 'package:recipe_app/src/bloc/selected_drink_category_bloc/selected_drink_category_event.dart';
+import 'package:recipe_app/src/bloc/selected_drink_category_bloc/selected_drink_category_state.dart';
 import 'package:recipe_app/src/model/selected_category_model.dart';
+import 'package:recipe_app/src/model/selected_drink_category_model.dart';
+import 'package:recipe_app/src/ui/detailed_page/detailed_page_view.dart';
 
 import '../../bloc/drink_category_bloc/drink_category_state.dart';
 
@@ -32,6 +37,7 @@ class _HomePageViewState extends State<HomePageView> {
   final FoodCategoryBloc _fcBloc = FoodCategoryBloc();
   final DrinkCategoryBloc _dcBloc = DrinkCategoryBloc();
   final SelectedCategoryBloc _scBloc = SelectedCategoryBloc();
+  final SelectedDrinkCategoryBloc _sdBloc = SelectedDrinkCategoryBloc();
   bool isCatSelected = false;
 
   @override
@@ -39,6 +45,7 @@ class _HomePageViewState extends State<HomePageView> {
     super.initState();
     _fcBloc.add(GetFoodCategoryList());
     _dcBloc.add(GetDrinkCategoryList());
+
     _pageController.addListener(() {
       if (_pageController.page != null) {
         _page = _pageController.page!;
@@ -113,10 +120,129 @@ class _HomePageViewState extends State<HomePageView> {
                   ),
                 ),
                 selectedVal == "food" ? foodCatModel() : drinkCatModel(),
-                isCatSelected ? categoryListData() : const SizedBox.shrink()
+                isCatSelected
+                    ? Column(
+                        children: const [
+                          SizedBox(height: 40.0),
+                          Text(
+                            "Popular Food",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(height: 20.0),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+                Builder(builder: (context) {
+                  if (isCatSelected && selectedVal == "food") {
+                    return categoryListData();
+                  } else if (isCatSelected && selectedVal == "drink") {
+                    return categoryDrinkListData();
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
               ]),
         ),
       ),
+    );
+  }
+
+  Widget categoryDrinkListData() {
+    return BlocProvider(
+      create: (context) => _sdBloc,
+      child:
+          BlocListener<SelectedDrinkCategoryBloc, SelectedDrinkCategoryState>(
+        listener: (context, state) {
+          if (state is SelectedDrinkCategoryError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message!),
+              ),
+            );
+          }
+        },
+        child:
+            BlocBuilder<SelectedDrinkCategoryBloc, SelectedDrinkCategoryState>(
+                builder: (context, state) {
+          if (state is SelectedDrinkCategoryInitial) {
+            return loader();
+          } else if (state is SelectedDrinkCategoryLoading) {
+            return loader();
+          } else if (state is SelectedDrinkCategoryLoaded) {
+            return selectedDrinkCatModel(state.categoriesModel);
+          } else {
+            return const Center(
+              child: Text("No Data Found"),
+            );
+          }
+        }),
+      ),
+    );
+  }
+
+  Widget selectedDrinkCatModel(SelectedDrinkCategoriesModel data) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 140,
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.only(top: 0.0, bottom: 10.0),
+                    child: FittedBox(
+                      child: Image.network(
+                          data.drinks[index].strDrinkThumb.toString()
+                          // data.drinks![index].strDrinkThumb,
+                          ),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
+                    child: Text(
+                      data.drinks[index].strDrink.toString(),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, bottom: 5.0),
+                    child: Row(children: const [
+                      Icon(
+                        Icons.star,
+                        color: Colors.red,
+                      ),
+                      Text(
+                        "4.9",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      Text(
+                        " (124 ratings ) Cafe Western Food",
+                        style: TextStyle(fontWeight: FontWeight.w300),
+                      ),
+                    ]),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 25.0,
+            ),
+          ],
+        );
+      },
+      itemCount: data.drinks.length,
     );
   }
 
@@ -154,25 +280,69 @@ class _HomePageViewState extends State<HomePageView> {
   Widget selectedCatModel(SelectedCategoriesModel data) {
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return Column(
-          children: [
-            Card(
-              child: Container(
-                height: 120,
-                width: MediaQuery.of(context).size.width,
-                margin:
-                    const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 20.0),
-                child: FittedBox(
-                  child: Image.network(
-                    data.meals[index].strMealThumb,
-                  ),
-                  fit: BoxFit.fill,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => const DetailedPageView())));
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 140,
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.only(top: 0.0, bottom: 10.0),
+                      child: FittedBox(
+                        child: Image.network(
+                          data.meals[index].strMealThumb,
+                        ),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
+                      child: Text(
+                        data.meals[index].strMeal,
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0, bottom: 5.0),
+                      child: Row(children: const [
+                        Icon(
+                          Icons.star,
+                          color: Colors.red,
+                        ),
+                        Text(
+                          "4.9",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        Text(
+                          " (124 ratings ) Cafe Western Food",
+                          style: TextStyle(fontWeight: FontWeight.w300),
+                        ),
+                      ]),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 25.0,
+              ),
+            ],
+          ),
         );
       },
       itemCount: data.meals.length,
@@ -221,16 +391,25 @@ class _HomePageViewState extends State<HomePageView> {
                           ClipRRect(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(25)),
-                            child: Container(
-                              height: 130,
-                              width: MediaQuery.of(context).size.width,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: FittedBox(
-                                child: Image.network(
-                                  "https://picsum.photos/id/431/200/300",
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _sdBloc.add(GetSelectedDrinkCategoryList(
+                                      i.strCategory));
+                                  isCatSelected = true;
+                                });
+                              },
+                              child: Container(
+                                height: 130,
+                                width: MediaQuery.of(context).size.width,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: FittedBox(
+                                  child: Image.network(
+                                    "https://picsum.photos/id/431/200/300",
+                                  ),
+                                  fit: BoxFit.fill,
                                 ),
-                                fit: BoxFit.fill,
                               ),
                             ),
                           ),

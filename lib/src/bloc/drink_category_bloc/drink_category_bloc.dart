@@ -9,7 +9,6 @@ class DrinkCategoryBloc extends Bloc<DrinkCategoryEvent, DrinkCategoryState> {
 
     on<GetDrinkCategoryList>((event, emit) async {
       try {
-        print("drink category api called");
         emit(DrinkCategoryStateLoading());
         final catList = await _api.fetchDrinkCategories();
         emit(DrinkCategoryStateLLoaded(catList));
