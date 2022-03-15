@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_app/src/bloc/drink_category_bloc/drink_category_bloc.dart';
@@ -122,11 +123,11 @@ class _HomePageViewState extends State<HomePageView> {
                 selectedVal == "food" ? foodCatModel() : drinkCatModel(),
                 isCatSelected
                     ? Column(
-                        children: const [
-                          SizedBox(height: 40.0),
+                        children: [
+                          const SizedBox(height: 40.0),
                           Text(
-                            "Popular Food",
-                            style: TextStyle(
+                            "Popular $selectedVal",
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(height: 20.0),
@@ -186,60 +187,118 @@ class _HomePageViewState extends State<HomePageView> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 140,
-                    width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.only(top: 0.0, bottom: 10.0),
-                    child: FittedBox(
-                      child: Image.network(
-                          data.drinks[index].strDrinkThumb.toString()
-                          // data.drinks![index].strDrinkThumb,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => DetailedPageView(
+                          selectedID: data.drinks[index].idDrink,
+                          category: "drink",
+                        ))));
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
+                child: MediaQuery.of(context).size.width > 768
+                    ? SizedBox(
+                        height: 120,
+                        child: Row(
+                          children: [
+                            Image.network(
+                              data.drinks[index].strDrinkThumb.toString(),
+                              height: 120,
+                            ),
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, left: 10.0, bottom: 10.0),
+                                  child: Text(
+                                    data.drinks[index].strDrink.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16.0, bottom: 5.0),
+                                  child: Row(children: const [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.red,
+                                    ),
+                                    Text(
+                                      "4.9",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    Text(
+                                      " (124 ratings ) Cafe Western Food",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                  ]),
+                                ),
+                              ],
+                            )
+                          ],
+                        ))
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 140,
+                            width: MediaQuery.of(context).size.width,
+                            margin:
+                                const EdgeInsets.only(top: 0.0, bottom: 10.0),
+                            child: FittedBox(
+                              child: Image.network(
+                                  data.drinks[index].strDrinkThumb.toString()
+                                  // data.drinks![index].strDrinkThumb,
+                                  ),
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
-                    child: Text(
-                      data.drinks[index].strDrink.toString(),
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, bottom: 5.0),
-                    child: Row(children: const [
-                      Icon(
-                        Icons.star,
-                        color: Colors.red,
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 20.0, bottom: 10.0),
+                            child: Text(
+                              data.drinks[index].strDrink.toString(),
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 16.0, bottom: 5.0),
+                            child: Row(children: const [
+                              Icon(
+                                Icons.star,
+                                color: Colors.red,
+                              ),
+                              Text(
+                                "4.9",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              Text(
+                                " (124 ratings ) Cafe Western Food",
+                                style: TextStyle(fontWeight: FontWeight.w300),
+                              ),
+                            ]),
+                          ),
+                        ],
                       ),
-                      Text(
-                        "4.9",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      Text(
-                        " (124 ratings ) Cafe Western Food",
-                        style: TextStyle(fontWeight: FontWeight.w300),
-                      ),
-                    ]),
-                  ),
-                ],
               ),
-            ),
-            const SizedBox(
-              height: 25.0,
-            ),
-          ],
+              const SizedBox(
+                height: 25.0,
+              ),
+            ],
+          ),
         );
       },
       itemCount: data.drinks.length,
@@ -287,7 +346,10 @@ class _HomePageViewState extends State<HomePageView> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: ((context) => const DetailedPageView())));
+                    builder: ((context) => DetailedPageView(
+                          selectedID: data.meals[index].idMeal,
+                          category: "food",
+                        ))));
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -295,48 +357,95 @@ class _HomePageViewState extends State<HomePageView> {
             children: [
               Card(
                 margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 140,
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.only(top: 0.0, bottom: 10.0),
-                      child: FittedBox(
-                        child: Image.network(
-                          data.meals[index].strMealThumb,
-                        ),
-                        fit: BoxFit.fill,
+                child: MediaQuery.of(context).size.width > 768
+                    ? SizedBox(
+                        height: 120,
+                        child: Row(
+                          children: [
+                            Image.network(
+                              data.meals[index].strMealThumb.toString(),
+                              height: 120,
+                            ),
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, left: 10.0, bottom: 10.0),
+                                  child: Text(
+                                    data.meals[index].strMeal.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16.0, bottom: 5.0),
+                                  child: Row(children: const [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.red,
+                                    ),
+                                    Text(
+                                      "4.9",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    Text(
+                                      " (124 ratings ) Cafe Western Food",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                  ]),
+                                ),
+                              ],
+                            )
+                          ],
+                        ))
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 140,
+                            width: MediaQuery.of(context).size.width,
+                            margin:
+                                const EdgeInsets.only(top: 0.0, bottom: 10.0),
+                            child: FittedBox(
+                              child: Image.network(
+                                data.meals[index].strMealThumb,
+                              ),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 20.0, bottom: 10.0),
+                            child: Text(
+                              data.meals[index].strMeal,
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 16.0, bottom: 5.0),
+                            child: Row(children: const [
+                              Icon(
+                                Icons.star,
+                                color: Colors.red,
+                              ),
+                              Text(
+                                "4.9",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              Text(
+                                " (124 ratings ) Cafe Western Food",
+                                style: TextStyle(fontWeight: FontWeight.w300),
+                              ),
+                            ]),
+                          ),
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
-                      child: Text(
-                        data.meals[index].strMeal,
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, bottom: 5.0),
-                      child: Row(children: const [
-                        Icon(
-                          Icons.star,
-                          color: Colors.red,
-                        ),
-                        Text(
-                          "4.9",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        Text(
-                          " (124 ratings ) Cafe Western Food",
-                          style: TextStyle(fontWeight: FontWeight.w300),
-                        ),
-                      ]),
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(
                 height: 25.0,
@@ -375,7 +484,8 @@ class _HomePageViewState extends State<HomePageView> {
                   scrollPhysics: const BouncingScrollPhysics(),
                   height: 150,
                   aspectRatio: 16 / 9,
-                  viewportFraction: 0.3,
+                  viewportFraction:
+                      MediaQuery.of(context).size.width < 768 ? 0.3 : 0.1,
                   initialPage: 0,
                   enableInfiniteScroll: false,
                   reverse: false,
@@ -465,7 +575,8 @@ class _HomePageViewState extends State<HomePageView> {
                   scrollPhysics: const BouncingScrollPhysics(),
                   height: 150,
                   aspectRatio: 16 / 9,
-                  viewportFraction: 0.3,
+                  viewportFraction:
+                      MediaQuery.of(context).size.width < 768 ? 0.3 : 0.1,
                   initialPage: 0,
                   enableInfiniteScroll: false,
                   reverse: false,
