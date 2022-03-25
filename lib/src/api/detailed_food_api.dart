@@ -7,7 +7,7 @@ class DetailedFoodApi {
 
   Future<DetailedFoodModel> fetchDetailedFoodData(String? selectedId) async {
     try {
-      print("selected drink id $selectedId");
+      print("Detailed food api called");
       Response response = await _dio.get(detailed_food_url + selectedId!);
       return DetailedFoodModel.fromJson(response.data);
     } catch (e) {

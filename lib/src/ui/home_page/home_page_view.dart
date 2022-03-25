@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:recipe_app/src/bloc/drink_category_bloc/drink_category_bloc.dart';
 import 'package:recipe_app/src/bloc/drink_category_bloc/drink_category_event.dart';
 import 'package:recipe_app/src/bloc/food_category_bloc/food_category_bloc.dart';
@@ -39,6 +39,8 @@ class _HomePageViewState extends State<HomePageView> {
   final DrinkCategoryBloc _dcBloc = DrinkCategoryBloc();
   final SelectedCategoryBloc _scBloc = SelectedCategoryBloc();
   final SelectedDrinkCategoryBloc _sdBloc = SelectedDrinkCategoryBloc();
+  final _storage = const FlutterSecureStorage();
+  bool isSameID = false;
   bool isCatSelected = false;
 
   @override
@@ -46,7 +48,6 @@ class _HomePageViewState extends State<HomePageView> {
     super.initState();
     _fcBloc.add(GetFoodCategoryList());
     _dcBloc.add(GetDrinkCategoryList());
-
     _pageController.addListener(() {
       if (_pageController.page != null) {
         _page = _pageController.page!;
@@ -102,9 +103,7 @@ class _HomePageViewState extends State<HomePageView> {
                     leading: const Icon(Icons.search, color: Colors.black),
                     title: TextField(
                         decoration: InputDecoration(
-                      hintText: selectedVal == "food"
-                          ? "Search Food"
-                          : "Search Drink",
+                      hintText: "Search $selectedVal",
                       border: InputBorder.none,
                     )),
                   ),
@@ -188,13 +187,28 @@ class _HomePageViewState extends State<HomePageView> {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {
+          onTap: () async {
+            var selectedID = await _storage.read(key: "selectedID").then((val) {
+              if (val.toString() != data.drinks[index].idDrink.toString()) {
+                _storage.write(
+                    key: "selectedID",
+                    value: data.drinks[index].idDrink.toString());
+                setState(() {
+                  isSameID = false;
+                });
+              } else {
+                setState(() {
+                  isSameID = true;
+                });
+              }
+            });
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: ((context) => DetailedPageView(
                           selectedID: data.drinks[index].idDrink,
                           category: "drink",
+                          isSameSelectedID: isSameID,
                         ))));
           },
           child: Column(
@@ -342,13 +356,28 @@ class _HomePageViewState extends State<HomePageView> {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {
+          onTap: () async {
+            var selectedID = await _storage.read(key: "selectedID").then((val) {
+              if (val.toString() != data.meals[index].idMeal.toString()) {
+                _storage.write(
+                    key: "selectedID",
+                    value: data.meals[index].idMeal.toString());
+                setState(() {
+                  isSameID = false;
+                });
+              } else {
+                setState(() {
+                  isSameID = true;
+                });
+              }
+            });
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: ((context) => DetailedPageView(
                           selectedID: data.meals[index].idMeal,
                           category: "food",
+                          isSameSelectedID: isSameID,
                         ))));
           },
           child: Column(
@@ -506,6 +535,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 setState(() {
                                   _sdBloc.add(GetSelectedDrinkCategoryList(
                                       i.strCategory));
+
                                   isCatSelected = true;
                                 });
                               },

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:recipe_app/src/bloc/detailed_drink_bloc/detailed_drink_bloc.dart';
 import 'package:recipe_app/src/bloc/detailed_drink_bloc/detailed_drink_event.dart';
 import 'package:recipe_app/src/bloc/detailed_drink_bloc/detailed_drink_state.dart';
@@ -12,46 +15,97 @@ import 'package:recipe_app/src/model/detailed_food_model.dart';
 class DetailedPageView extends StatefulWidget {
   String selectedID;
   String category;
-  DetailedPageView({Key? key, required this.selectedID, required this.category})
-      : super(key: key);
+  bool isSameSelectedID;
+  DetailedPageView({
+    Key? key,
+    required this.selectedID,
+    required this.category,
+    required this.isSameSelectedID,
+  }) : super(key: key);
 
   @override
-  State<DetailedPageView> createState() =>
-      _DetailedPageViewState(selectedID, category);
+  State<DetailedPageView> createState() => _DetailedPageViewState(
+        selectedID,
+        category,
+        isSameSelectedID,
+      );
 }
 
 class _DetailedPageViewState extends State<DetailedPageView>
     with SingleTickerProviderStateMixin {
   String selectedId;
   String category;
-  _DetailedPageViewState(this.selectedId, this.category);
+  bool isSameSelectedID;
+  _DetailedPageViewState(
+    this.selectedId,
+    this.category,
+    this.isSameSelectedID,
+  );
   final DetailedFoodBloc _foodBloc = DetailedFoodBloc();
   final DetailedDrinkBloc _drinkBloc = DetailedDrinkBloc();
-
   late TabController _tabController;
+  late DetailedFoodModel _foodModelData;
+  late DetailedDrinkModel _drinkModelData;
+  final _storage = const FlutterSecureStorage();
   var noOfServings = 1;
+
   @override
   void initState() {
     // TODO: implement initState
+
     _tabController = TabController(length: 3, vsync: this);
     category == "food"
         ? _foodBloc.add(GetDetailedFoodData(selectedId))
         : _drinkBloc.add(GetDetailedDrinkData(selectedId));
+
     super.initState();
+  }
+
+  Future<dynamic> readStorageVal() async {
+    await _storage.read(key: "detailedData").then((value) async {
+      _foodModelData = DetailedFoodModel.fromJson(
+          json.decode(value!) as Map<String, dynamic>);
+      return Future.value(true);
+    });
+  }
+
+  Future<dynamic> readDrinkStorageVal() async {
+    await _storage.read(key: "detailedData").then((value) async {
+      _drinkModelData = DetailedDrinkModel.fromJson(
+          json.decode(value!) as Map<String, dynamic>);
+      return Future.value(true);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Builder(
-        builder: (context) {
-          if (category == "food") {
-            return FoodData();
-          } else {
-            return DrinkData();
-          }
-        },
-      ),
+      // body: Builder(
+      //   builder: (context) {
+      //     return category == "food" ? sameIDFoodWidget() : sameIDDrinkWidget();
+      //   },
+      // ),
+      body: Builder(builder: (context) {
+        return category == "food"
+            ? FutureBuilder(
+                future: readStorageVal(),
+                builder: (context, snapshot) {
+                  if (isSameSelectedID) {
+                    return foodDetailedData(_foodModelData);
+                  } else {
+                    return FoodData();
+                  }
+                })
+            : FutureBuilder(
+                future: readDrinkStorageVal(),
+                builder: (context, snapshot) {
+                  if (isSameSelectedID) {
+                    return drinkDetailedData(_drinkModelData);
+                  } else {
+                    return DrinkData();
+                  }
+                });
+      }),
     );
   }
 
@@ -77,6 +131,9 @@ class _DetailedPageViewState extends State<DetailedPageView>
               } else if (state is DetailedFoodStateLoading) {
                 return loader();
               } else if (state is DetailedFoodStateLoaded) {
+                _storage.write(
+                    key: "detailedData",
+                    value: json.encode(state.foodModel.toJson()));
                 return foodDetailedData(state.foodModel);
               } else {
                 return const Center(
@@ -358,6 +415,9 @@ class _DetailedPageViewState extends State<DetailedPageView>
               } else if (state is DetailedDrinkStateLoading) {
                 return loader();
               } else if (state is DetailedDrinkStateLoaded) {
+                _storage.write(
+                    key: "detailedData",
+                    value: json.encode(state.drinkModel.toJson()));
                 return drinkDetailedData(state.drinkModel);
               } else {
                 return const Center(
