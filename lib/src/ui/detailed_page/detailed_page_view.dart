@@ -254,7 +254,8 @@ class _DetailedPageViewState extends State<DetailedPageView>
                     ),
                   ),
                   Container(
-                    height: 200,
+                    margin: const EdgeInsets.only(bottom: 40),
+                    height: MediaQuery.of(context).size.height * 0.6,
                     child: TabBarView(controller: _tabController, children: [
                       //////////// Ingredients tab ////////////////
                       Column(
@@ -548,7 +549,7 @@ class _DetailedPageViewState extends State<DetailedPageView>
                     thickness: 0.4,
                   ),
                   Container(
-                    height: 200,
+                    height: 300,
                     child: TabBarView(controller: _tabController, children: [
                       //////////// Ingredients tab ////////////////
                       Column(

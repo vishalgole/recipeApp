@@ -16,7 +16,7 @@ class DrinkCategoriesModel {
     required this.drinks,
   });
 
-  late final List<Drink> drinks;
+  List<Drink>? drinks;
 
   DrinkCategoriesModel.withError(String errorMessage) {
     error = errorMessage;
@@ -28,7 +28,7 @@ class DrinkCategoriesModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "drinks": List<dynamic>.from(drinks.map((x) => x.toJson())),
+        "drinks": List<dynamic>.from(drinks!.map((x) => x.toJson())),
       };
 }
 

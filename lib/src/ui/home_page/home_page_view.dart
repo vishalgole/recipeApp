@@ -107,7 +107,11 @@ class _HomePageViewState extends State<HomePageView> {
                       border: InputBorder.none,
                     )),
                   ),
-                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  margin: const EdgeInsets.only(
+                    top: 20,
+                    right: 20,
+                    bottom: 20,
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: const Color.fromARGB(255, 78, 66, 66),
@@ -216,6 +220,7 @@ class _HomePageViewState extends State<HomePageView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Card(
+                key: Key("drink$index"),
                 margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
                 child: MediaQuery.of(context).size.width > 768
                     ? SizedBox(
@@ -357,6 +362,7 @@ class _HomePageViewState extends State<HomePageView> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () async {
+            print("selected index $index");
             var selectedID = await _storage.read(key: "selectedID").then((val) {
               if (val.toString() != data.meals[index].idMeal.toString()) {
                 _storage.write(
@@ -385,6 +391,7 @@ class _HomePageViewState extends State<HomePageView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Card(
+                key: Key("food$index"),
                 margin: const EdgeInsets.only(right: 20.0, bottom: 25.0),
                 child: MediaQuery.of(context).size.width > 768
                     ? SizedBox(
@@ -522,7 +529,7 @@ class _HomePageViewState extends State<HomePageView> {
                   enlargeCenterPage: false,
                   scrollDirection: Axis.horizontal,
                 ),
-                items: state.drinkCatModel.drinks.map((i) {
+                items: state.drinkCatModel.drinks?.map((i) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Column(
@@ -614,7 +621,7 @@ class _HomePageViewState extends State<HomePageView> {
                   enlargeCenterPage: false,
                   scrollDirection: Axis.horizontal,
                 ),
-                items: state.foodCatModel.categories.map((i) {
+                items: state.foodCatModel.categories?.map((i) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Column(
@@ -636,6 +643,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 5.0),
                                 child: FittedBox(
+                                  key: Key("foodimage$i"),
                                   child: Image.network(
                                     i.strCategoryThumb,
                                   ),

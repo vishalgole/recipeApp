@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/src/ui/main_menu/main_page_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

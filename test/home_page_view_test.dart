@@ -1,44 +1,28 @@
-import 'package:bloc_test/bloc_test.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
-import 'package:recipe_app/src/api/food_category_api.dart';
-import 'package:recipe_app/src/bloc/food_category_bloc/food_category_bloc.dart';
-import 'package:recipe_app/src/bloc/food_category_bloc/food_category_event.dart';
-import 'package:recipe_app/src/bloc/food_category_bloc/food_category_state.dart';
-import 'package:recipe_app/src/model/food_category_model.dart' as foodCat;
-import 'package:recipe_app/src/model/food_category_model.dart' as food;
-import 'package:test/test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mocktail_image_network/mocktail_image_network.dart';
+import 'package:recipe_app/src/ui/home_page/home_page_view.dart';
 
+@GenerateMocks([],
+    customMocks: [MockSpec<NavigatorObserver>(returnNullOnMissingStub: true)])
 void main() {
-  var mockTestData = <food.FoodCategoriesModel>[
-    food.FoodCategoriesModel(categories: [
-      foodCat.Category(
-          idCategory: "1",
-          strCategory: "beef",
-          strCategoryThumb:
-              "https:\/\/www.themealdb.com\/images\/category\/beef.png",
-          strCategoryDescription:
-              "Beef is the culinary name for meat from cattle, particularly skeletal muscle. Humans have been eating beef since prehistoric times.[1] Beef is a source of high-quality protein and essential nutrients.[2]"),
-    ])
-  ];
-  group('Home screen food category test', () {
-    late FoodCategoryBloc foodBloc;
-    FoodCategoryApi foodCategoryApi;
+  group("Home page view testing", () {
+    testWidgets("Check home page loaded successfully",
+        (WidgetTester tester) async {
+      await mockNetworkImages(() async {
+        final mockObserver = MockNavigatorObserver();
+        // final evenRoute = MaterialPageRoute(builder: (_) => Container());
 
-    setUp(() {
-      EquatableConfig.stringify = true;
-      foodCategoryApi = FoodCategoryApi();
-      foodBloc = FoodCategoryBloc();
+        await tester.pumpWidget(MaterialApp(
+            home: HomePageView(selectedVal: "food"),
+            navigatorObservers: [mockObserver]));
+        await tester.pumpAndSettle();
+        expect(find.text("Good Morning Akila!"), findsOneWidget);
+      });
     });
-
-    blocTest<FoodCategoryBloc, FoodCategoryState>(
-        "emits ['FoodCategoryStateIniitial,FoodCategoryStateLoading,FoodCategoryStateLoaded']",
-        build: () => foodBloc,
-        act: (bloc) => bloc.add(GetFoodCategoryList()),
-        expect: () => [
-              FoodCategoryStateIniitial(),
-              FoodCategoryStateLoading(),
-              // FoodCategoryStateLoaded(mockTestData),
-            ]);
   });
 }
+
+class MockNavigatorObserver extends Mock implements NavigatorObserver {}

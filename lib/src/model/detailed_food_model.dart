@@ -25,12 +25,11 @@ class DetailedFoodModel {
   factory DetailedFoodModel.fromJson(Map<String, dynamic> json) =>
       DetailedFoodModel(
         meals: List<Map<String, String>>.from(json["meals"].map((x) =>
-            Map.from(x).map(
-                (k, v) => MapEntry<String, String>(k, v == null ? null : v)))),
+            Map.from(x).map((k, v) => MapEntry<String, String>(k, v ?? null)))),
       );
 
   Map<String, dynamic> toJson() => {
-        "meals": List<dynamic>.from(meals.map((x) => Map.from(x).map(
-            (k, v) => MapEntry<String, dynamic>(k, v == null ? null : v)))),
+        "meals": List<dynamic>.from(meals.map((x) => Map.from(x)
+            .map((k, v) => MapEntry<String, dynamic>(k, v ?? null)))),
       };
 }

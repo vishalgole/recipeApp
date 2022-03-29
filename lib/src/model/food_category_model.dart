@@ -20,7 +20,7 @@ class FoodCategoriesModel {
     required this.categories,
   });
 
-  late final List<Category> categories;
+  List<Category>? categories;
 
   FoodCategoriesModel.withError(String errorMessage) {
     error = errorMessage;
@@ -33,7 +33,7 @@ class FoodCategoriesModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "categories": List<dynamic>.from(categories.map((x) => x.toJson())),
+        "categories": List<dynamic>.from(categories!.map((x) => x.toJson())),
       };
 }
 

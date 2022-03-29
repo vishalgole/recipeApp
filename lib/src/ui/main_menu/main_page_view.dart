@@ -63,7 +63,7 @@ class MainMenuPageView extends StatelessWidget {
                     maxHeight: 0.6 * deviceHeight,
                   ),
                   decoration: const BoxDecoration(
-                    color: Colors.red,
+                    color: Color.fromARGB(255, 170, 14, 3),
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(40),
                       bottomRight: Radius.circular(40),
@@ -96,6 +96,7 @@ class MainMenuPageView extends StatelessWidget {
                         padding: EdgeInsets.only(left: 40.0),
                         child: Center(
                           child: ListTile(
+                            key: Key("food"),
                             title: Text(
                               "Food",
                               style: TextStyle(
@@ -130,19 +131,19 @@ class MainMenuPageView extends StatelessWidget {
                 ),
               ),
               Positioned(
-                right: deviceWidth * 0.03,
-                top: deviceHeight * 0.1,
+                right: deviceWidth * 0.01,
+                top: deviceHeight * 0.09,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Icon(
-                    Icons.chevron_right_outlined,
-                    color: Colors.red,
-                    // size: 40,
+                    Icons.chevron_right_rounded,
+                    color: Color.fromARGB(255, 170, 14, 3),
+                    size: 30,
                   ),
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
-                      primary: Colors.transparent),
+                      primary: Colors.white),
                 ),
               ),
 // Second widget
@@ -172,6 +173,7 @@ class MainMenuPageView extends StatelessWidget {
                         padding: EdgeInsets.only(left: 40.0),
                         child: Center(
                           child: ListTile(
+                            key: Key("drink"),
                             title: Text(
                               "Beverages",
                               style: TextStyle(
@@ -206,19 +208,19 @@ class MainMenuPageView extends StatelessWidget {
                 ),
               ),
               Positioned(
-                right: deviceWidth * 0.03,
-                top: deviceHeight * 0.3,
+                right: deviceWidth * 0.01,
+                top: deviceHeight * 0.29,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Icon(
                     Icons.chevron_right_outlined,
-                    color: Colors.red,
-                    // size: 40,
+                    color: Color.fromARGB(255, 170, 14, 3),
+                    size: 30,
                   ),
                   style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
-                      primary: Colors.transparent),
+                      primary: Colors.white),
                 ),
               )
             ],
